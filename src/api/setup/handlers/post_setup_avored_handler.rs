@@ -104,6 +104,38 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD updated_at ON TABLE component_field TYPE datetime;
 
 
+
+        REMOVE TABLE pages;
+        DEFINE TABLE pages;
+
+        DEFINE FIELD name ON TABLE pages TYPE string;
+        DEFINE FIELD identifier ON TABLE pages TYPE string;
+        DEFINE FIELD content ON TABLE pages TYPE string;
+        DEFINE FIELD created_by ON TABLE pages TYPE string;
+        DEFINE FIELD updated_by ON TABLE pages TYPE string;
+        DEFINE FIELD created_at ON TABLE pages TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE pages TYPE datetime;
+        DEFINE INDEX pages_identifier_index ON TABLE pages COLUMNS identifier UNIQUE;
+
+        CREATE pages CONTENT {
+            name: 'Home Page',
+            identifier: 'home-page',
+            content:
+'**Bold Content**
+*Italic content*
+*Content*
+# Header
+*+TESt+1
+*+Test+1
+1.+List+numer+1
+2.+list+number+2
+3.list number 3',
+            created_by: $full_name,
+            updated_by: $full_name,
+            created_at: time::now(),
+            updated_at: time::now()
+        };
+
     ";
 
     let password = payload.password.as_str();
@@ -129,7 +161,7 @@ pub async fn post_setup_avored_handler(
     let responses = ds.execute(sql, ses, Some(vars)).await?;
 
     println!("{responses:?}");
-    println!("");
+    println!();
     println!("Migrate fresh done!");
 
     Ok(Redirect::to("/admin/login"))

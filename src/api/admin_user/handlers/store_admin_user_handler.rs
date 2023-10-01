@@ -1,5 +1,6 @@
 use std::{path::Path, sync::Arc};
 
+use crate::providers::avored_view_provider::translate;
 use crate::{
     api::admin_user::requests::store_admin_user_request::StoreAdminUserRequest,
     avored_state::AvoRedState,
@@ -14,7 +15,6 @@ use axum::{
 };
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use urlencoding::decode_binary;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn store_admin_user_handler(
     state: State<Arc<AvoRedState>>,
@@ -48,19 +48,17 @@ pub async fn store_admin_user_handler(
                 let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
                 let data = field.bytes().await.unwrap();
-                
-                if !file_name.is_empty()  {
 
+                if !file_name.is_empty() {
                     let file_ext = file_name.split(".").last().unwrap_or(".png");
                     let new_file_name = format!("{}.{}", s, file_ext);
-    
+
                     let file_name = Path::new(&new_file_name).file_name().unwrap();
-    
+
                     profile_image = format!("upload/{}", new_file_name);
                     let full_path = Path::new("public").join("upload").join(file_name);
                     tokio::fs::write(full_path, data).await.unwrap();
                 }
-
             }
             "full_name" => {
                 let bytes = field.bytes().await.unwrap();
@@ -112,7 +110,7 @@ pub async fn store_admin_user_handler(
     // .unwrap();
 
     let mut has_error = false;
-    if payload.full_name.len() <= 0 {
+    if payload.full_name.is_empty() {
         has_error = true;
         session
             .insert(
@@ -121,7 +119,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.email.len() <= 0 {
+    if payload.email.is_empty() {
         has_error = true;
         session
             .insert(
@@ -130,7 +128,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.email.len() <= 0 {
+    if payload.email.is_empty() {
         has_error = true;
         session
             .insert(
@@ -148,7 +146,7 @@ pub async fn store_admin_user_handler(
     //         )
     //         .expect("Could not store the validation errors into session.");
     // }
-    if payload.password.len() <= 0 {
+    if payload.password.is_empty() {
         has_error = true;
         session
             .insert(
@@ -157,7 +155,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.confirmation_password.len() <= 0 {
+    if payload.confirmation_password.is_empty() {
         has_error = true;
         session
             .insert(

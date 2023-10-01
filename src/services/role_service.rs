@@ -1,5 +1,3 @@
-#[warn(dead_code)]
-
 use crate::{
     error::Result,
     models::{
@@ -93,7 +91,6 @@ impl RoleService {
             has_next_page,
             previous_page_number: (current_page - 1),
         };
-
 
         let roles = self
             .role_repository

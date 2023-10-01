@@ -12,6 +12,7 @@ use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
 
+use crate::api::page::page_routes::page_routes;
 use crate::{
     api::{
         admin_user::admin_user_routes::admin_user_routes,
@@ -46,6 +47,7 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .merge(routes_hello(state.clone()))
         .merge(component_routes(state.clone()))
+        .merge(page_routes(state.clone()))
         .merge(admin_user_routes(state.clone()))
         .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
@@ -57,8 +59,8 @@ async fn main() -> Result<()> {
     println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");
     println!(r" /_/   \_\_/ \___/|_| \_\___|\__,_|");
 
-    println!("");
-    println!("");
+    println!();
+    println!();
     println!("Server started: http://localhost:8080");
 
     // region:    --- Start Server
